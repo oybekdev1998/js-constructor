@@ -527,14 +527,11 @@ function hmrAcceptRun(bundle, id) {
 
 },{}],"8lqZg":[function(require,module,exports) {
 var _module = require("./module");
-var _site = require("./classes/site");
+var _app = require("./classes/app");
 var _stylesCss = require("./styles/styles.css");
-var _sidebar = require("./classes/sidebar");
-const site = new _site.Site('#site');
-site.toRender(_module.model);
-const side = new _sidebar.Sidebar('#panel');
+new _app.App(_module.model).init();
 
-},{"./module":"gGQe1","./styles/styles.css":"38Edj","./classes/site":"24VTm","./classes/sidebar":"5YCBk"}],"gGQe1":[function(require,module,exports) {
+},{"./module":"gGQe1","./styles/styles.css":"38Edj","./classes/app":"g9LQJ"}],"gGQe1":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "model", ()=>model
@@ -733,6 +730,7 @@ function col(content, tag) {
     return `<div class="col-sm"><${tag}>${content}</${tag}></div>`;
 }
 function css(styles = {}) {
+    if (typeof styles === 'string') return styles;
     const toString = (key)=>`${key}: ${styles[key]} `
     ;
     return Object.keys(styles).map(toString).join(";");
@@ -753,7 +751,29 @@ function block(type) {
   `;
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"38Edj":[function() {},{}],"24VTm":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"38Edj":[function() {},{}],"g9LQJ":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "App", ()=>App
+);
+var _site = require("./site");
+var _sidebar = require("./sidebar");
+class App {
+    constructor(model){
+        this.model = model;
+    }
+    init() {
+        const site = new _site.Site('#site');
+        site.toRender(this.model);
+        const updateCallback = (newBlock)=>{
+            this.model.push(newBlock);
+            site.toRender(this.model);
+        };
+        const side = new _sidebar.Sidebar('#panel', updateCallback);
+    }
+}
+
+},{"./site":"24VTm","./sidebar":"5YCBk","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"24VTm":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Site", ()=>Site
@@ -764,26 +784,29 @@ class Site {
         this.$el = document.querySelector(selector);
     }
     toRender(model) {
+        this.$el.innerHTML = '';
         model.forEach((block)=>{
             this.$el.insertAdjacentHTML('beforeend', block.toHTML());
         });
     }
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../module":"gGQe1"}],"5YCBk":[function(require,module,exports) {
+},{"../module":"gGQe1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5YCBk":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Sidebar", ()=>Sidebar
 );
 var _utils = require("../utils");
+var _blocks = require("./blocks");
 class Sidebar {
-    constructor(selector){
+    constructor(selector, updateCallBack){
         this.$el = document.querySelector(selector);
+        this.update = updateCallBack;
         this.init();
     }
     init() {
         this.$el.insertAdjacentHTML('afterbegin', this.template);
-        this.$el.addEventListener('submit', this.add);
+        this.$el.addEventListener('submit', this.add.bind(this));
     }
     get template() {
         return [
@@ -796,9 +819,17 @@ class Sidebar {
         const type = event.target.name;
         const value = event.target.value.value;
         const style = event.target.styles.value;
+        const newBlock = type === 'text' ? new _blocks.TextBlocks(value, {
+            style
+        }) : new _blocks.TitleBlocks(value, {
+            style
+        });
+        this.update(newBlock);
+        event.target.value.value = '';
+        event.target.styles.value = '';
     }
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../utils":"en4he"}]},["7fmqN","8lqZg"], "8lqZg", "parcelRequire3b32")
+},{"../utils":"en4he","./blocks":"gMfMj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["7fmqN","8lqZg"], "8lqZg", "parcelRequire3b32")
 
 //# sourceMappingURL=index.975ef6c8.js.map
