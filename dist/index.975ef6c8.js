@@ -527,13 +527,14 @@ function hmrAcceptRun(bundle, id) {
 
 },{}],"8lqZg":[function(require,module,exports) {
 var _module = require("./module");
+var _site = require("./classes/site");
 var _stylesCss = require("./styles/styles.css");
-const $site = document.getElementById('site');
-_module.model.forEach((block)=>{
-    $site.insertAdjacentHTML('beforeend', block.toHTML());
-});
+var _sidebar = require("./classes/sidebar");
+const site = new _site.Site('#site');
+site.toRender(_module.model);
+const side = new _sidebar.Sidebar('#panel');
 
-},{"./module":"gGQe1","./styles/styles.css":"38Edj"}],"gGQe1":[function(require,module,exports) {
+},{"./module":"gGQe1","./styles/styles.css":"38Edj","./classes/site":"24VTm","./classes/sidebar":"5YCBk"}],"gGQe1":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "model", ()=>model
@@ -723,6 +724,8 @@ parcelHelpers.export(exports, "col", ()=>col
 );
 parcelHelpers.export(exports, "css", ()=>css
 );
+parcelHelpers.export(exports, "block", ()=>block
+);
 function row(content, style = '') {
     return `<div class="row" style="${style}">${content}</div>`;
 }
@@ -734,7 +737,68 @@ function css(styles = {}) {
     ;
     return Object.keys(styles).map(toString).join(";");
 }
+function block(type) {
+    return `
+    <form name="${type}">
+      <div class="mb-3">
+        <h5>${type}</h5>
+        <input type="text" class="form-control form-control-sm" name="value" placeholder="value">
+      </div>
+      <div class="mb-3">
+        <input type="text" class="form-control form-control-sm" name="styles" placeholder="styles">
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm">Add</button>
+    </form>
+    <br/>
+  `;
+}
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"38Edj":[function() {},{}]},["7fmqN","8lqZg"], "8lqZg", "parcelRequire3b32")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"38Edj":[function() {},{}],"24VTm":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Site", ()=>Site
+);
+var _module = require("../module");
+class Site {
+    constructor(selector){
+        this.$el = document.querySelector(selector);
+    }
+    toRender(model) {
+        model.forEach((block)=>{
+            this.$el.insertAdjacentHTML('beforeend', block.toHTML());
+        });
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../module":"gGQe1"}],"5YCBk":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Sidebar", ()=>Sidebar
+);
+var _utils = require("../utils");
+class Sidebar {
+    constructor(selector){
+        this.$el = document.querySelector(selector);
+        this.init();
+    }
+    init() {
+        this.$el.insertAdjacentHTML('afterbegin', this.template);
+        this.$el.addEventListener('submit', this.add);
+    }
+    get template() {
+        return [
+            _utils.block('Title'),
+            _utils.block('Text')
+        ].join('');
+    }
+    add(event) {
+        event.preventDefault();
+        const type = event.target.name;
+        const value = event.target.value.value;
+        const style = event.target.styles.value;
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../utils":"en4he"}]},["7fmqN","8lqZg"], "8lqZg", "parcelRequire3b32")
 
 //# sourceMappingURL=index.975ef6c8.js.map
