@@ -3,7 +3,7 @@
 ### 🐟 Links
 ***
 * `Repository` [https://github.com/oybekdev1998/js-constructor](https://github.com/oybekdev1998/js-constructor)
-* `Project`[https://podcast-app-in-java-script.vercel.app/](https://podcast-app-in-java-script.vercel.app/)
+* `Project`[https://constructor-site.vercel.app/](https://constructor-site.vercel.app/)
 * `oybekdev1998`[https://github.com/oybekdev1998](https://github.com/oybekdev1998)
 
 ***
